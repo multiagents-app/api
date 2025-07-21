@@ -6,7 +6,7 @@ info:
     A API MultiAgents oferece uma interface robusta e escalável para gerenciar a operação de agentes de inteligência artificial da plataforma MultiAgents. Por meio desta API, é possível administrar leads, coordenar trabalhos e monitorar as atividades dos agentes, garantindo controle total sobre as interações automatizadas e o desempenho da equipe digital.
 
     Links importantes:
-    - [Repositório da API Miçtoagemts](https://github.com/multiagents-app/api)
+    - [Repositório da API Multiagents](https://github.com/multiagents-app/api)
     - [Definição da API Multiagents](https://github.com/multiagents-app/api/blob/main/resources/openapi.yaml)
   termsOfService: https://www.multiagents.com.br/termos
   contact:
