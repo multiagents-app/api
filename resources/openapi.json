@@ -1,0 +1,1072 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Multiagents API",
+    "description": "A API MultiAgents oferece uma interface robusta e escalável para gerenciar a operação de agentes de inteligência artificial da plataforma MultiAgents. Por meio desta API, é possível administrar leads, coordenar trabalhos e monitorar as atividades dos agentes, garantindo controle total sobre as interações automatizadas e o desempenho da equipe digital.\n\nLinks importantes:\n- [Repositório da API Multiagents](https://github.com/multiagents-app/api)\n- [Definição da API Multiagents](https://github.com/multiagents-app/api/blob/main/resources/openapi.yaml)",
+    "termsOfService": "https://www.multiagents.com.br/termos",
+    "contact": {
+      "email": "contato@multiagents.pro"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Saiba mais sobre o multiagents",
+    "url": "https://www.multiagents.com.br"
+  },
+  "servers": [
+    {
+      "url": "https://api.multiagents.app/v1/pub"
+    }
+  ],
+  "tags": [
+    {
+      "name": "leads",
+      "description": "Leads, contatos"
+    },
+    {
+      "name": "works",
+      "description": "Trabalhos dos agents"
+    }
+  ],
+  "paths": {
+    "/lead": {
+      "get": {
+        "tags": [
+          "leads"
+        ],
+        "summary": "Listar os leads ou ver detalhe de um lead",
+        "description": "Listar os leads ou ver detatlhe do lead",
+        "operationId": "listLeads",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Pagina da listagem, cada página tem um limite de 50 registros por página."
+          },
+          {
+            "in": "query",
+            "name": "lead_id",
+            "schema": {
+              "type": "string",
+              "example": "7e8be7a5-630b-459f-9659-4149d0141234"
+            },
+            "description": "Para ver os detalhes do lead, informe o lead_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listagem com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/leads"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Detalhes do lead",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/leaddetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro na entrada dos dados"
+          },
+          "401": {
+            "description": "Autenticação incorreta"
+          },
+          "404": {
+            "description": "Lead não encontrado"
+          }
+        },
+        "security": [
+          {
+            "CompanyIdHeader": []
+          },
+          {
+            "ApiKeyHeader": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "leads"
+        ],
+        "summary": "Adicionar ou alterar lead, contatos e trabalhos",
+        "description": "Adicionar ou alterar lead, contatos e trabalhos",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/leadupsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lead_id": {
+                      "type": "string",
+                      "example": "7e8be7a5-630b-459f-9659-4149d0141234"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CompanyIdHeader": []
+          },
+          {
+            "ApiKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/work": {
+      "get": {
+        "tags": [
+          "works"
+        ],
+        "summary": "Listar os trabalhos da conta",
+        "description": "Listar os trabalhos da conta",
+        "operationId": "listWorks",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Pagina atual da listagem",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limite de registro por página(max. 200)",
+            "schema": {
+              "type": "number",
+              "default": 50
+            }
+          },
+          {
+            "name": "work_type",
+            "in": "query",
+            "description": "Tipo de trabalho",
+            "schema": {
+              "type": "string",
+              "default": "all",
+              "enum": [
+                "all",
+                "outbound",
+                "inbound"
+              ]
+            }
+          },
+          {
+            "name": "work_name",
+            "in": "query",
+            "description": "Nome do trabalho buscado",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listworks"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CompanyIdHeader": []
+          },
+          {
+            "ApiKeyHeader": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "works"
+        ],
+        "summary": "Adicionar leads ao trabalho",
+        "description": "Adicionar leads ao trabalho",
+        "operationId": "insertLeadWork",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/workleadUpsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Trabalho não encontrado"
+          }
+        },
+        "security": [
+          {
+            "CompanyIdHeader": []
+          },
+          {
+            "ApiKeyHeader": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "works"
+        ],
+        "summary": "Alterar leads ao trabalho",
+        "description": "Alterar leads ao trabalho",
+        "operationId": "updateLeadWork",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/workleadUpsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Trabalho não encontrado"
+          }
+        },
+        "security": [
+          {
+            "CompanyIdHeader": []
+          },
+          {
+            "ApiKeyHeader": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "works"
+        ],
+        "summary": "Delete leads do trabalho",
+        "description": "Delete leads do trabalho",
+        "operationId": "deleteLeadWork",
+        "parameters": [
+          {
+            "name": "work_id",
+            "in": "query",
+            "description": "Id do trabalho",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "0ba0e3b4-b95e-42af-9c2c-36b69f19a018"
+            }
+          },
+          {
+            "name": "work_lead_id",
+            "in": "query",
+            "description": "Id do lead no trabalho",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "0ba0e3b4-b95e-42af-9c2c-36b69f19a018"
+            }
+          },
+          {
+            "name": "work_type",
+            "in": "query",
+            "description": "Tipo de trabalho",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "outbound",
+              "enum": [
+                "outbound",
+                "inbound"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Trabalho ou lead nao encontrado"
+          }
+        },
+        "security": [
+          {
+            "CompanyIdHeader": []
+          },
+          {
+            "ApiKeyHeader": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "leads": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "example": 0
+          },
+          "total": {
+            "type": "number",
+            "example": 2
+          },
+          "leads": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "lead_id": {
+                  "type": "string",
+                  "example": "88ff49f5-0c4a-4cf0-82c0-d9d6d871d654"
+                },
+                "company_id": {
+                  "type": "string",
+                  "example": "dc469a7a-7ef2-1234-8de2-b55c2df271234"
+                },
+                "team_id": {
+                  "type": "string",
+                  "example": null
+                },
+                "name": {
+                  "type": "string",
+                  "example": "ACME"
+                },
+                "country": {
+                  "type": "string",
+                  "example": "Brasil"
+                },
+                "city": {
+                  "type": "string",
+                  "example": "Florianópolis"
+                },
+                "language": {
+                  "type": "string",
+                  "example": "pt-br"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "business"
+                },
+                "industry_type": {
+                  "type": "string",
+                  "example": "commerce"
+                },
+                "activity_field": {
+                  "type": "string",
+                  "example": "Loja Virtual"
+                },
+                "niche": {
+                  "type": "string",
+                  "example": "Casa & Decoração"
+                },
+                "website": {
+                  "type": "string",
+                  "example": "https://www.ACME.com/"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "active"
+                },
+                "created_at": {
+                  "type": "string",
+                  "example": "2025-01-26T00:00:21.266Z"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "example": "2025-01-26T00:00:21.266Z"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "papalegoas@acme.com"
+                }
+              }
+            }
+          }
+        }
+      },
+      "leaddetail": {
+        "type": "object",
+        "properties": {
+          "lead": {
+            "type": "object",
+            "properties": {
+              "lead_id": {
+                "type": "string",
+                "example": "7e8be7a5-630b-459f-9659-4149d0141234"
+              },
+              "company_id": {
+                "type": "string",
+                "example": "dc469a7a-7ef2-497b-1234-b55c2df21234"
+              },
+              "team_id": {
+                "type": "string",
+                "example": null
+              },
+              "name": {
+                "type": "string",
+                "example": "Elon Musk"
+              },
+              "country": {
+                "type": "string",
+                "example": null
+              },
+              "city": {
+                "type": "string",
+                "example": null
+              },
+              "language": {
+                "type": "string",
+                "example": null
+              },
+              "type": {
+                "type": "string",
+                "example": "business"
+              },
+              "industry_type": {
+                "type": "string",
+                "example": null
+              },
+              "activity_field": {
+                "type": "string",
+                "example": null
+              },
+              "niche": {
+                "type": "string",
+                "example": null
+              },
+              "description": {
+                "type": "string",
+                "example": null
+              },
+              "website": {
+                "type": "string",
+                "example": null
+              },
+              "notes": {
+                "type": "string",
+                "example": null
+              },
+              "status": {
+                "type": "string",
+                "example": "active"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2025-07-02T15:59:37.501Z"
+              },
+              "updated_at": {
+                "type": "string",
+                "example": "2025-07-03T16:07:16.763Z"
+              },
+              "list_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": ""
+                }
+              },
+              "tag_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": ""
+                }
+              },
+              "email": {
+                "type": "string",
+                "example": "elonmusk@multiagents.app"
+              },
+              "contacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "contact_id": {
+                      "type": "string",
+                      "example": "2345ae43-3505-4bb2-8b03-c6865007afe6"
+                    },
+                    "lead_id": {
+                      "type": "string",
+                      "example": "7e8be7a5-630b-459f-9659-4149d0141234"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Elon Musk"
+                    },
+                    "profile_picture": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "elonmusk@multiagents.app"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "whatsapp": {
+                      "type": "string",
+                      "example": 5531912341234
+                    },
+                    "linkedin": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "instagram": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "role": {
+                      "type": "string",
+                      "example": "decisor"
+                    },
+                    "preferences": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "active"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "example": "2025-07-02T16:35:15.760Z"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "example": "2025-07-03T16:07:17.170Z"
+                    },
+                    "company_id": {
+                      "type": "string",
+                      "example": "dc469a7a-7ef2-497b-8de2-b55c2df2728"
+                    }
+                  }
+                }
+              },
+              "works": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "string",
+                      "example": "3ebeb981-89bd-4fa5-be20-2b3a5fd7c2f7"
+                    },
+                    "work_type": {
+                      "type": "string",
+                      "example": "outbound"
+                    },
+                    "work_lead_id": {
+                      "type": "string",
+                      "example": "263bbd81-97cf-460f-836f-45e2dba8650a"
+                    },
+                    "lead_id": {
+                      "type": "string",
+                      "example": "7e8be7a5-630b-459f-9659-4149d0141234"
+                    },
+                    "team_id": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "current_stage": {
+                      "type": "string",
+                      "example": "new"
+                    },
+                    "lead_temperature": {
+                      "type": "string",
+                      "example": "cold"
+                    },
+                    "aida_script": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "spin_script": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "notes": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "analyzing"
+                    },
+                    "status_report": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "last_interaction_at": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "added_at": {
+                      "type": "string",
+                      "example": "2025-07-03T15:52:42.445Z"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "example": "2025-07-03T16:07:18.463Z"
+                    },
+                    "tag_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": ""
+                      }
+                    },
+                    "completed_task_count": {
+                      "type": "number",
+                      "example": 3
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "leadupsert": {
+        "type": "object",
+        "properties": {
+          "lead": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Required",
+                "example": "rick@sanches.com"
+              },
+              "team_id": {
+                "type": "string",
+                "example": "null,"
+              },
+              "name": {
+                "type": "string",
+                "example": "Rick Sanches"
+              },
+              "country": {
+                "type": "string",
+                "example": "United States"
+              },
+              "city": {
+                "type": "string",
+                "example": "null,"
+              },
+              "language": {
+                "type": "string",
+                "example": "null,"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "business",
+                  "person"
+                ],
+                "example": "business"
+              },
+              "industry_type": {
+                "type": "string",
+                "enum": [
+                  "industry",
+                  "commerce",
+                  "services",
+                  "non-profit",
+                  "governmental",
+                  null
+                ],
+                "example": null
+              },
+              "activity_field": {
+                "type": "string",
+                "example": "null,"
+              },
+              "niche": {
+                "type": "string",
+                "example": "null,"
+              },
+              "description": {
+                "type": "string",
+                "example": "null,"
+              },
+              "website": {
+                "type": "string",
+                "example": "null,"
+              },
+              "notes": {
+                "type": "string",
+                "example": "null,"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "inactive"
+                ],
+                "example": "active"
+              },
+              "contacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "contact_id": {
+                      "type": "string",
+                      "description": "Somente para update contact",
+                      "example": "12341234-1234-1234-1234-123412341234"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Required",
+                      "example": "Rick Sanchez"
+                    },
+                    "profile_picture": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "rick@sanchez.com"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "whatsapp": {
+                      "type": "string",
+                      "example": 5511999999999
+                    },
+                    "linkedin": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "instagram": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "decisor",
+                        "c-level",
+                        "director",
+                        "manager",
+                        "other"
+                      ],
+                      "example": "decisor"
+                    },
+                    "preferences": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "inactive"
+                      ],
+                      "example": "active"
+                    }
+                  }
+                }
+              },
+              "works": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "work_id": {
+                      "type": "string",
+                      "description": "Obrigatorio para update"
+                    },
+                    "work_type": {
+                      "type": "string",
+                      "example": "outbound",
+                      "enum": [
+                        "outbound",
+                        "inbound"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "analyzing",
+                        "active",
+                        "paused",
+                        "engaged",
+                        "opportunity",
+                        "buyer",
+                        "discarded"
+                      ],
+                      "example": "analyzing"
+                    },
+                    "current_stage": {
+                      "type": "string",
+                      "example": "new",
+                      "enum": [
+                        "new",
+                        "attention",
+                        "discovery",
+                        "consideration",
+                        "negotiation"
+                      ]
+                    },
+                    "lead_temperature": {
+                      "type": "string",
+                      "example": "cold",
+                      "enum": [
+                        "hot",
+                        "warm",
+                        "cold"
+                      ]
+                    },
+                    "notes": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "listworks": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "example": 0
+          },
+          "total": {
+            "type": "number",
+            "example": 1234
+          },
+          "works": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "agent_id": {
+                  "type": "string",
+                  "example": "43533fbd-3458-446f-912f-3bb9870176951"
+                },
+                "work_status": {
+                  "type": "string",
+                  "example": "paused"
+                },
+                "work_name": {
+                  "type": "string",
+                  "example": "Aquecimento"
+                },
+                "work_id": {
+                  "type": "string",
+                  "example": "0ba0e3b4-b95e-42af-9c2c-36b69f19a018"
+                },
+                "work_type": {
+                  "type": "string",
+                  "example": "outbound"
+                },
+                "work_lead_id": {
+                  "type": "string",
+                  "example": "6f74ac6e-7f0f-40a1-bcc7-9f34fdfacfec"
+                },
+                "lead_id": {
+                  "type": "string",
+                  "example": "c033e7cd-ab7f-4b80-9801-3c30ffd0bd4f"
+                },
+                "team_id": {
+                  "type": "string",
+                  "example": null
+                },
+                "current_stage": {
+                  "type": "string",
+                  "example": "attention"
+                },
+                "lead_temperature": {
+                  "type": "string",
+                  "example": "cold"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "discarded"
+                },
+                "last_interaction_at": {
+                  "type": "string",
+                  "example": null
+                },
+                "added_at": {
+                  "type": "string",
+                  "example": "2025-02-13T11:43:49.044Z"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "example": "2025-02-13T11:43:49.044Z"
+                },
+                "tag_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "completed_task_count": {
+                  "type": "number",
+                  "example": 6
+                }
+              }
+            }
+          }
+        }
+      },
+      "workleadUpsert": {
+        "type": "object",
+        "properties": {
+          "work_id": {
+            "type": "string",
+            "example": "6f74ac6e-7f0f-40a1-bcc7-9f34fdfacfec"
+          },
+          "work_type": {
+            "type": "string",
+            "example": "outbound"
+          },
+          "leads": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "lead_id": {
+                  "type": "string",
+                  "example": "c033e7cd-ab7f-4b80-9801-3c30ffd0bd4f"
+                },
+                "current_stage": {
+                  "type": "string",
+                  "enum": [
+                    "new",
+                    "attention",
+                    "discovery",
+                    "consideration",
+                    "negotiation"
+                  ],
+                  "example": "new"
+                },
+                "lead_temperature": {
+                  "type": "string",
+                  "example": "cold"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "analyzing",
+                    "active",
+                    "paused",
+                    "engaged",
+                    "opportunity",
+                    "buyer",
+                    "discarded"
+                  ],
+                  "example": "analyzing"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "CompanyIdHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-company_id"
+      },
+      "ApiKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api_key"
+      }
+    }
+  },
+  "security": [
+    {
+      "CompanyIdHeader": [],
+      "ApiKeyHeader": []
+    }
+  ]
+}

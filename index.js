@@ -16,14 +16,14 @@ http.createServer((req, res) => {
           res.end(content);
         }
       });
-  } else if (req.url === '/resources/openapi.yaml') {
-      const filePath = path.join(__dirname, '/resources/openapi.yaml');
+  } else if (req.url === '/resources/openapi.json') {
+      const filePath = path.join(__dirname, '/resources/openapi.json');
       fs.readFile(filePath, (err, content) => {
         if (err) {
           res.writeHead(500);
           res.end('Erro interno no servidor');
         } else {
-          res.writeHead(200, { 'Content-Type': 'text/yaml' });
+          res.writeHead(200, { 'Content-Type': 'text/json' });
           res.end(content);
         }
       });
